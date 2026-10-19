@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+EKPC/logs/
+EKPC/data/datasets/
+EKPC/data/cifar-100-python/
+EKPC/data/cifar-100-python.tar.gz
+*.pth
+*.pt
+*.pkl
