@@ -40,7 +40,7 @@ Data, weight, and output paths in JSON are relative to `EKPC/`; absolute paths a
 | `adapter_imageneta.json` | Split-ImageNet-A | 200 | 20 | 10 |
 | `adapter_imagenetr.json` | Split-ImageNet-R | 200 | 20 | 10 |
 
-Default settings: SGD, learning rate 0.01, momentum 0.9, weight decay 0.0005, batch size 48, 30 initial epochs, 15 incremental epochs, and 5 classifier calibration epochs. Adapter bottleneck: 64; cosine scale/margin: 20/0.01; `eta1=100`, `eta2=1`, `w1=w2=1`. Seeds: `[1997, 1996, 1993]`.
+Default settings: SGD, learning rate 0.01, momentum 0.9, weight decay 0.0005, batch size 48, 30 initial epochs, 15 incremental epochs, and 5 classifier calibration epochs. Adapter bottleneck: 64; cosine scale/margin: 20/0.01; `eta1=100`, `eta2=1`, `w1=w2=1`. Drift kernel bandwidth: `drift_sigma=4.0`; calibration sampling: `samples_per_class=256`; covariance diagonal jitter: `1e-3`. Seeds: `[1997, 1996, 1993]`.
 
 For 20-task ImageNet-A/R experiments, set `init_cls=increment=10`. For 50/100-task ImageNet-R and DomainNet experiments, use 4/2 classes per task. For DINO pretraining, set `convnet_type` to `pretrained_vit_b16_224_dino1k_adapter`.
 
@@ -77,17 +77,6 @@ torch.save(model.state_dict(), 'vit_b16_in21k_features.pth')
 Per-seed logs and JSON metrics are written to `EKPC/logs/adapter/<dataset>/<log_init_cls>/<increment>/`, where `log_init_cls=0` when initial and incremental class counts match. JSON files contain the class order, top-1/top-5 curves, `A_Last`, and `A_Avg`.
 
 `EKPC/logs/adapter/<dataset>/summary.json` contains the multi-seed mean and standard deviation (`ddof=0`). Set `output_dir` to separate experiments; repeated runs in the same location replace matching outputs.
-
-<details>
-<summary>Reproducibility notes</summary>
-
-- Training uses RandomResizedCrop(224), horizontal flipping, and ToTensor; evaluation uses Resize(256), CenterCrop(224), and ToTensor. Normalize is not applied.
-- Importance statistics are collected once per task after training. Parameter-importance maps use the magnitude of the accumulated global vector; this nonnegative-weight convention is additional to the signed expression in Eq. 6.
-- Prototype compensation adds the weighted `new_features - old_features` displacement, with identical sample ordering and evaluation transforms.
-- Kernel bandwidth is `drift_sigma=4.0`; calibration uses 256 samples per class and covariance diagonal jitter `1e-3`. Old covariance matrices are retained.
-- The supplied environment has been checked on CPU. Full benchmark reproduction is not yet verified. Checkpoint resume and standalone evaluation are not provided.
-
-</details>
 
 ## Citation
 

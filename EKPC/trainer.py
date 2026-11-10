@@ -100,7 +100,7 @@ def _set_device(args):
         device = torch.device("cpu")
     else:
         if not torch.cuda.is_available():
-            raise RuntimeError("CUDA is unavailable; use device: [-1] for CPU checks")
+            raise RuntimeError("CUDA is unavailable; use device: [-1] for CPU execution")
         device = torch.device(f"cuda:{int(index)}")
         torch.cuda.set_device(device)
     args["device"] = [device]
